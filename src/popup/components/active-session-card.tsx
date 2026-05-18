@@ -11,15 +11,15 @@ interface ActiveSessionCardProps {
 export function ActiveSessionCard({session, now}: ActiveSessionCardProps) {
     return (
         <section
-            className="overflow-hidden rounded-[12px] border border-[#ddd7cd] bg-white p-4 shadow-[0_1px_0_rgba(255,255,255,0.7)]">
+            className="overflow-hidden rounded-xl border border-[#ddd7cd] bg-white p-4 shadow-[0_1px_0_rgba(255,255,255,0.7)]">
             <div className="mb-4 flex items-start justify-between gap-3">
                 <div>
                     <div
-                        className="mb-3 inline-flex items-center gap-2 rounded-[8px] border border-[#f4b4a7] bg-[#fbe1d8] px-2 py-1 text-[11px] font-medium text-[#b33b1d]">
+                        className="mb-3 inline-flex items-center gap-2 rounded-lg border border-[#f4b4a7] bg-[#fbe1d8] px-2 py-1 text-[11px] font-medium text-[#b33b1d]">
                         <Activity className="h-3.5 w-3.5"/>
                         Live now
                     </div>
-                    <h2 className="max-w-[14rem] text-[24px] font-medium leading-[1.05] tracking-[-0.05em] text-slate-950">
+                    <h2 className="max-w-56 text-[24px] font-medium leading-[1.05] tracking-tighter text-slate-950">
                         {getMeetingLabel(session.title, session.meetCode)}
                     </h2>
                 </div>

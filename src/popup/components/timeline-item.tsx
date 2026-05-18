@@ -10,7 +10,7 @@ interface TimelineItemProps {
 export function TimelineItem({session}: TimelineItemProps) {
     return (
         <article
-            className="group rounded-[12px] border border-[#ddd7cd] bg-white p-3.5 shadow-[0_1px_0_rgba(255,255,255,0.7)] transition hover:border-[#cfc8bc]">
+            className="group rounded-xl border border-[#ddd7cd] bg-white p-3.5 shadow-[0_1px_0_rgba(255,255,255,0.7)] transition hover:border-[#cfc8bc]">
             <div>
                 <div className="mb-2.5 flex items-start justify-between gap-3">
                     <div>

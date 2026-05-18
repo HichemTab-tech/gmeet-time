@@ -4,6 +4,7 @@ import {getExtensionSnapshot} from '../lib/storage'
 import {clampDurationToWindow, formatDayLabel, formatDuration, getDayWindow, overlapsWindow,} from '../lib/time'
 import type {ExtensionSnapshot} from '../types/meeting'
 import {ActiveSessionCard} from './components/active-session-card'
+import {getDemoSnapshot} from './demo-data'
 import {TimelineItem} from './components/timeline-item'
 
 const GITHUB_URL = 'https://github.com/HichemTab-tech/gmeet-time'
@@ -64,12 +65,23 @@ function App() {
         }
     }, [])
 
+    const shouldUseDevelopmentSnapshot =
+        import.meta.env.DEV &&
+        snapshot.sessions.length === 0 &&
+        snapshot.activeSessions.length === 0
+
+    const effectiveSnapshot = useMemo(() => {
+        return shouldUseDevelopmentSnapshot ? getDemoSnapshot(now) : snapshot
+    }, [now, shouldUseDevelopmentSnapshot, snapshot])
+
+    const showingLoading = loading
+
     const today = useMemo(() => {
         const dayWindow = getDayWindow(now)
-        const completed = snapshot.sessions.filter((session) =>
+        const completed = effectiveSnapshot.sessions.filter((session) =>
             overlapsWindow(session.startedAt, session.endedAt, dayWindow.start, dayWindow.end),
         )
-        const active = snapshot.activeSessions.filter((session) =>
+        const active = effectiveSnapshot.activeSessions.filter((session) =>
             overlapsWindow(session.startedAt, now, dayWindow.start, dayWindow.end),
         )
 
@@ -99,7 +111,7 @@ function App() {
             longestSessionMs: allDurations.length > 0 ? Math.max(...allDurations) : 0,
             label: formatDayLabel(now),
         }
-    }, [now, snapshot.activeSessions, snapshot.sessions])
+    }, [effectiveSnapshot.activeSessions, effectiveSnapshot.sessions, now])
 
     return (
         <main className="min-h-screen bg-[#f3f1ec] px-2.5 py-2.5 text-slate-900">
@@ -199,7 +211,7 @@ function App() {
                         <div className="font-mono text-xs text-slate-500">{today.completed.length} items</div>
                     </div>
 
-                    {loading ? (
+                    {showingLoading ? (
                         <div
                             className="rounded-xl border border-dashed border-[#d3cdc3] bg-white/75 px-4 py-8 text-center text-sm text-slate-500">
                             Loading timeline…

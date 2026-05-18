@@ -1,10 +1,9 @@
-import {ArrowUpRight, Clock3, Radio, Sparkles, Timer, Waves} from 'lucide-react'
+import {ArrowUpRight, ChevronDown, Clock3, Radio, Timer} from 'lucide-react'
 import {useEffect, useMemo, useState} from 'react'
 import {getExtensionSnapshot} from '../lib/storage'
 import {clampDurationToWindow, formatDayLabel, formatDuration, getDayWindow, overlapsWindow,} from '../lib/time'
 import type {ExtensionSnapshot} from '../types/meeting'
 import {ActiveSessionCard} from './components/active-session-card'
-import {SummaryCard} from './components/summary-card'
 import {TimelineItem} from './components/timeline-item'
 
 const GITHUB_URL = 'https://github.com/HichemTab-tech/gmeet-time'
@@ -101,72 +100,49 @@ function App() {
     }, [now, snapshot.activeSessions, snapshot.sessions])
 
     return (
-        <main className="min-h-screen px-4 py-4 text-slate-800">
-            <div
-                className="rounded-[28px] border border-white/75 bg-white/62 p-4 shadow-[0_22px_60px_rgba(15,23,42,0.10)] backdrop-blur-xl">
-                <header className="mb-4 flex items-start justify-between gap-4">
+        <main className="min-h-screen px-3 py-3 text-slate-800">
+            <div className="rounded-3xl border border-slate-200/80 bg-white/88 p-3.5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] backdrop-blur">
+                <header className="mb-4 flex items-start justify-between gap-3">
                     <div>
-                        <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span
-                  className="rounded-full border border-slate-200 bg-white/85 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.22em] text-slate-500">
-                local-first
-              </span>
-                            <span
-                                className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-700">
-                open source
-              </span>
-                        </div>
-                        <h1 className="text-[28px] font-semibold tracking-[-0.06em] text-slate-950">
+                        <h1 className="text-[22px] font-semibold tracking-[-0.06em] text-slate-950">
                             gmeet-time
                         </h1>
-                        <p className="mt-2 max-w-[26rem] text-sm leading-6 text-slate-600">
-                            Google Meet time tracking with a clean daily history, no backend, and a popup built for fast
-                            inspection.
+                        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">
+                            {today.label}
                         </p>
                     </div>
-                    <a
-                        className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-600 transition hover:border-slate-300 hover:text-slate-950"
-                        href={GITHUB_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        <ArrowUpRight className="h-4 w-4"/>
-                        Repo
-                    </a>
-                </header>
-
-                <section
-                    className="mb-5 rounded-3xl border border-slate-200/80 bg-[linear-gradient(135deg,rgba(15,23,42,0.96),rgba(15,118,110,0.92))] p-4 text-white shadow-[0_20px_50px_rgba(15,23,42,0.18)]">
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                        <div>
-                            <div
-                                className="mb-2 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/6 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.22em] text-emerald-200">
-                                <Waves className="h-3.5 w-3.5"/>
-                                Today
+                    <details className="group relative">
+                        <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-slate-600 transition hover:border-slate-300 hover:text-slate-950">
+                            More
+                            <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180"/>
+                        </summary>
+                        <div className="absolute right-0 z-10 mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_18px_38px_rgba(15,23,42,0.12)]">
+                            <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="rounded-2xl bg-slate-50 px-2 py-2.5">
+                                    <div className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Total</div>
+                                    <div className="font-mono mt-1 text-xs text-slate-950">{formatDuration(today.totalMeetingMs)}</div>
+                                </div>
+                                <div className="rounded-2xl bg-slate-50 px-2 py-2.5">
+                                    <div className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Meetings</div>
+                                    <div className="font-mono mt-1 text-xs text-slate-950">{today.meetingCount}</div>
+                                </div>
+                                <div className="rounded-2xl bg-slate-50 px-2 py-2.5">
+                                    <div className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Longest</div>
+                                    <div className="font-mono mt-1 text-xs text-slate-950">{formatDuration(today.longestSessionMs)}</div>
+                                </div>
                             </div>
-                            <div className="text-2xl font-semibold tracking-[-0.05em]">{today.label}</div>
+                            <a
+                                className="mt-3 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-500 transition hover:text-slate-950"
+                                href={GITHUB_URL}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <ArrowUpRight className="h-3.5 w-3.5"/>
+                                Repository
+                            </a>
                         </div>
-                        <div className="text-right">
-                            <div className="text-[11px] uppercase tracking-[0.22em] text-emerald-200/80">Brand</div>
-                            <div className="mt-1 text-sm font-medium text-white">{BRAND_NAME}</div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3 text-sm">
-                        <div className="rounded-2xl border border-white/10 bg-white/7 p-3">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/80">Meetings</div>
-                            <div className="mt-2 font-mono text-lg">{today.meetingCount}</div>
-                        </div>
-                        <div className="rounded-2xl border border-white/10 bg-white/7 p-3">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/80">Total</div>
-                            <div className="mt-2 font-mono text-lg">{formatDuration(today.totalMeetingMs)}</div>
-                        </div>
-                        <div className="rounded-2xl border border-white/10 bg-white/7 p-3">
-                            <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/80">Longest</div>
-                            <div className="mt-2 font-mono text-lg">{formatDuration(today.longestSessionMs)}</div>
-                        </div>
-                    </div>
-                </section>
+                    </details>
+                </header>
 
                 {today.active.length > 0 ? (
                     <section className="mb-5 space-y-3">
@@ -174,37 +150,24 @@ function App() {
                             <ActiveSessionCard key={session.id} session={session} now={now}/>
                         ))}
                     </section>
-                ) : null}
-
-                <section className="mb-5 grid grid-cols-3 gap-3">
-                    <SummaryCard
-                        label="Total meeting time"
-                        value={formatDuration(today.totalMeetingMs)}
-                        icon={<Timer className="h-4 w-4"/>}
-                        accent="mint"
-                    />
-                    <SummaryCard
-                        label="Meeting count"
-                        value={`${today.meetingCount}`}
-                        icon={<Radio className="h-4 w-4"/>}
-                    />
-                    <SummaryCard
-                        label="Longest session"
-                        value={formatDuration(today.longestSessionMs)}
-                        icon={<Clock3 className="h-4 w-4"/>}
-                    />
-                </section>
+                ) : (
+                    <section className="mb-5 rounded-3xl border border-slate-200 bg-slate-50/80 px-4 py-4">
+                        <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
+                            Current meet
+                        </div>
+                        <div className="mt-2 text-sm text-slate-700">
+                            No active meeting detected right now.
+                        </div>
+                    </section>
+                )}
 
                 <section className="mb-5">
                     <div className="mb-3 flex items-center justify-between gap-3">
                         <div>
                             <h2 className="text-base font-semibold tracking-[-0.03em] text-slate-950">Timeline</h2>
-                            <p className="mt-1 text-sm text-slate-500">Today&apos;s completed Google Meet sessions.</p>
+                            <p className="mt-1 text-sm text-slate-500">Today&apos;s meetings.</p>
                         </div>
-                        <div
-                            className="rounded-full border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs text-slate-500">
-                            {today.completed.length} stored
-                        </div>
+                        <div className="font-mono text-xs text-slate-500">{today.completed.length} items</div>
                     </div>
 
                     {loading ? (
@@ -227,27 +190,41 @@ function App() {
                     )}
                 </section>
 
-                <footer
-                    className="rounded-3xl border border-slate-200 bg-white/70 p-4 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
-                    <div className="mb-2 flex items-center gap-2 text-slate-950">
-                        <Sparkles className="h-4 w-4 text-emerald-600"/>
-                        <span className="text-sm font-semibold tracking-[-0.03em]">About this build</span>
+                <section className="mb-4 grid grid-cols-3 gap-2.5">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                            <Timer className="h-3.5 w-3.5"/>
+                            Total
+                        </div>
+                        <div className="font-mono mt-2 text-sm text-slate-950">{formatDuration(today.totalMeetingMs)}</div>
                     </div>
-                    <p className="text-sm leading-6 text-slate-600">
-                        Built by {BRAND_NAME}. Sessions stay on-device in Chrome storage, the tracker runs automatically
-                        on Meet tabs, and the codebase is ready for stats, charts, notes, export, and sync.
-                    </p>
-                    <div
-                        className="mt-3 flex items-center justify-between gap-3 text-xs uppercase tracking-[0.18em] text-slate-500">
-                        <span>No backend</span>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                            <Radio className="h-3.5 w-3.5"/>
+                            Count
+                        </div>
+                        <div className="font-mono mt-2 text-sm text-slate-950">{today.meetingCount}</div>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                            <Clock3 className="h-3.5 w-3.5"/>
+                            Longest
+                        </div>
+                        <div className="font-mono mt-2 text-sm text-slate-950">{formatDuration(today.longestSessionMs)}</div>
+                    </div>
+                </section>
+
+                <footer className="border-t border-slate-200 px-1 pt-3">
+                    <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
+                        <span>Built by {BRAND_NAME}</span>
                         <a
-                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-2.5 py-1 transition hover:border-slate-300 hover:text-slate-950"
+                            className="inline-flex items-center gap-1.5 transition hover:text-slate-950"
                             href={GITHUB_URL}
                             target="_blank"
                             rel="noreferrer"
                         >
                             <ArrowUpRight className="h-3.5 w-3.5"/>
-                            github.com/HichemTab-tech/gmeet-time
+                            GitHub
                         </a>
                     </div>
                 </footer>

@@ -7,9 +7,7 @@
 
 :root {
     color: #111827;
-    background: radial-gradient(circle at top left, rgba(63, 98, 18, 0.14), transparent 34%),
-    radial-gradient(circle at top right, rgba(15, 118, 110, 0.16), transparent 28%),
-    linear-gradient(180deg, #f7fbf8 0%, #f1f6f2 100%);
+    background: linear-gradient(180deg, #fafaf8 0%, #f4f4f1 100%);
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -31,6 +29,7 @@ body,
 body {
     width: 430px;
     min-height: 640px;
+    background: transparent;
 }
 
 a {

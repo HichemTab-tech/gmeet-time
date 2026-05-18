@@ -10,9 +10,8 @@ interface TimelineItemProps {
 export function TimelineItem({session}: TimelineItemProps) {
     return (
         <article
-            className="group relative rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[0_14px_32px_rgba(15,23,42,0.07)] backdrop-blur transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(15,23,42,0.11)]">
-            <div className="absolute left-5 top-5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100"/>
-            <div className="pl-6">
+            className="group rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.05)] transition hover:border-slate-300 hover:shadow-[0_14px_28px_rgba(15,23,42,0.08)]">
+            <div>
                 <div className="mb-3 flex items-start justify-between gap-3">
                     <div>
                         <h3 className="text-sm font-semibold tracking-[-0.03em] text-slate-950">
@@ -20,8 +19,7 @@ export function TimelineItem({session}: TimelineItemProps) {
                         </h3>
                         <p className="font-mono mt-1 text-xs text-slate-500">{session.meetCode}</p>
                     </div>
-                    <div
-                        className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-700">
+                    <div className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-mono text-xs text-slate-700">
                         {formatDuration(session.endedAt - session.startedAt)}
                     </div>
                 </div>

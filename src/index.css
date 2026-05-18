@@ -7,7 +7,7 @@
 
 :root {
     color: #111827;
-    background: linear-gradient(180deg, #fafaf8 0%, #f4f4f1 100%);
+    background: #f3f1ec;
     font-family: 'Space Grotesk', system-ui, sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -28,7 +28,7 @@ body,
 
 body {
     width: 430px;
-    min-height: 640px;
+    /*min-height: 640px;*/
     background: transparent;
 }
 

@@ -102,25 +102,25 @@ function App() {
     }, [now, snapshot.activeSessions, snapshot.sessions])
 
     return (
-        <main className="min-h-screen px-3 py-3 text-slate-800">
-            <div className="rounded-3xl border border-slate-200/80 bg-white/88 p-3.5 shadow-[0_18px_40px_rgba(15,23,42,0.06)] backdrop-blur">
-                <header className="mb-4 flex items-start justify-between gap-3">
+        <main className="min-h-screen bg-[#f3f1ec] px-2.5 py-2.5 text-slate-900">
+            <div className="rounded-[18px] border border-[#ddd8cf] bg-[#f7f5f0] p-2.5 shadow-[0_10px_24px_rgba(60,46,26,0.08)]">
+                <header className="mb-3 flex items-start justify-between gap-3">
                     <div>
-                        <h1 className="text-[22px] font-semibold tracking-[-0.06em] text-slate-950">
+                        <h1 className="text-[21px] font-medium tracking-[-0.05em] text-slate-950">
                             gmeet-time
                         </h1>
-                        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">
+                        <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-slate-500">
                             {today.label}
                         </p>
                     </div>
                     <details className="group relative">
-                        <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-slate-600 transition hover:border-slate-300 hover:text-slate-950">
+                        <summary className="flex cursor-pointer list-none items-center gap-1.5 rounded-[10px] border border-[#d9d3c8] bg-white px-3 py-2 text-[11px] font-medium uppercase tracking-[0.16em] text-slate-700 shadow-[0_1px_0_rgba(255,255,255,0.6)] transition hover:bg-[#fbfaf8]">
                             More
                             <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180"/>
                         </summary>
-                        <div className="absolute right-0 z-10 mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_18px_38px_rgba(15,23,42,0.12)]">
+                        <div className="absolute right-0 z-10 mt-2 w-56 rounded-[12px] border border-[#d9d3c8] bg-white p-2 shadow-[0_12px_28px_rgba(60,46,26,0.12)]">
                             <a
-                                className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+                                className="flex items-center justify-between rounded-[10px] px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-[#f6f3ee] hover:text-slate-950"
                                 href={GITHUB_URL}
                                 target="_blank"
                                 rel="noreferrer"
@@ -130,14 +130,14 @@ function App() {
                             </a>
                             <button
                                 type="button"
-                                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+                                className="flex w-full items-center justify-between rounded-[10px] px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-[#f6f3ee] hover:text-slate-950"
                                 onClick={() => setAboutOpen((current) => !current)}
                             >
                                 <span>About</span>
                                 <ChevronDown className={`h-3.5 w-3.5 transition ${aboutOpen ? 'rotate-180' : ''}`}/>
                             </button>
                             <a
-                                className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+                                className="flex items-center justify-between rounded-[10px] px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-[#f6f3ee] hover:text-slate-950"
                                 href={PRIVACY_POLICY_URL}
                                 target="_blank"
                                 rel="noreferrer"
@@ -150,21 +150,20 @@ function App() {
                 </header>
 
                 {aboutOpen ? (
-                    <section className="mb-4 rounded-3xl border border-slate-200 bg-slate-50/90 px-4 py-4">
+                    <section className="mb-4 rounded-[12px] border border-[#ddd7cd] bg-[#ebe7df] px-4 py-3.5">
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
-                                    About
+                                <div className="text-[13px] font-medium text-slate-950">
+                                    About gmeet-time
                                 </div>
-                                <p className="mt-2 text-sm leading-6 text-slate-700">
-                                    gmeet-time detects Google Meet join and leave activity, stores sessions locally in
-                                    Chrome extension storage, and shows the current meeting plus today&apos;s timeline in
-                                    the popup.
+                                <p className="mt-1.5 text-[13px] leading-5 text-slate-700">
+                                    This extension automatically detects and tracks the time spent in active Google Meet
+                                    sessions, building a daily timeline. No data is sent to external servers.
                                 </p>
                             </div>
                             <button
                                 type="button"
-                                className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 transition hover:border-slate-300 hover:text-slate-950"
+                                className="rounded-full p-1 text-slate-500 transition hover:text-slate-950"
                                 onClick={() => setAboutOpen(false)}
                                 aria-label="Close about panel"
                             >
@@ -181,7 +180,7 @@ function App() {
                         ))}
                     </section>
                 ) : (
-                    <section className="mb-5 rounded-3xl border border-slate-200 bg-slate-50/80 px-4 py-4">
+                    <section className="mb-5 rounded-[12px] border border-[#ddd7cd] bg-white px-4 py-4 shadow-[0_1px_0_rgba(255,255,255,0.7)]">
                         <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
                             Current meet
                         </div>
@@ -194,15 +193,15 @@ function App() {
                 <section className="mb-5">
                     <div className="mb-3 flex items-center justify-between gap-3">
                         <div>
-                            <h2 className="text-base font-semibold tracking-[-0.03em] text-slate-950">Timeline</h2>
-                            <p className="mt-1 text-sm text-slate-500">Today&apos;s meetings.</p>
+                            <h2 className="text-[15px] font-medium tracking-[-0.03em] text-slate-950">Timeline</h2>
+                            <p className="mt-0.5 text-[13px] text-slate-600">Today&apos;s meetings</p>
                         </div>
                         <div className="font-mono text-xs text-slate-500">{today.completed.length} items</div>
                     </div>
 
                     {loading ? (
                         <div
-                            className="rounded-3xl border border-dashed border-slate-300 bg-white/60 px-4 py-8 text-center text-sm text-slate-500">
+                            className="rounded-[12px] border border-dashed border-[#d3cdc3] bg-white/75 px-4 py-8 text-center text-sm text-slate-500">
                             Loading timeline…
                         </div>
                     ) : today.completed.length > 0 ? (
@@ -213,7 +212,7 @@ function App() {
                         </div>
                     ) : (
                         <div
-                            className="rounded-3xl border border-dashed border-slate-300 bg-white/60 px-4 py-8 text-center text-sm text-slate-500">
+                            className="rounded-[12px] border border-dashed border-[#d3cdc3] bg-white/75 px-4 py-8 text-center text-sm text-slate-500">
                             No completed Meet sessions yet today. Join a meeting and the timeline will populate
                             automatically.
                         </div>
@@ -221,31 +220,31 @@ function App() {
                 </section>
 
                 <section className="mb-4 grid grid-cols-3 gap-2.5">
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
-                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                    <div className="rounded-[10px] border border-[#d9d3c8] bg-white px-3 py-2.5 shadow-[0_1px_0_rgba(255,255,255,0.7)]">
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-slate-500">
                             <Timer className="h-3.5 w-3.5"/>
                             Total
                         </div>
-                        <div className="font-mono mt-2 text-sm text-slate-950">{formatDuration(today.totalMeetingMs)}</div>
+                        <div className="font-mono mt-1.5 text-center text-[15px] text-slate-950">{formatDuration(today.totalMeetingMs)}</div>
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
-                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                    <div className="rounded-[10px] border border-[#d9d3c8] bg-white px-3 py-2.5 shadow-[0_1px_0_rgba(255,255,255,0.7)]">
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-slate-500">
                             <Radio className="h-3.5 w-3.5"/>
                             Count
                         </div>
-                        <div className="font-mono mt-2 text-sm text-slate-950">{today.meetingCount}</div>
+                        <div className="font-mono mt-1.5 text-center text-[15px] text-slate-950">{today.meetingCount}</div>
                     </div>
-                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
-                        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                    <div className="rounded-[10px] border border-[#d9d3c8] bg-white px-3 py-2.5 shadow-[0_1px_0_rgba(255,255,255,0.7)]">
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-[0.16em] text-slate-500">
                             <Clock3 className="h-3.5 w-3.5"/>
                             Longest
                         </div>
-                        <div className="font-mono mt-2 text-sm text-slate-950">{formatDuration(today.longestSessionMs)}</div>
+                        <div className="font-mono mt-1.5 text-center text-[15px] text-slate-950">{formatDuration(today.longestSessionMs)}</div>
                     </div>
                 </section>
 
-                <footer className="border-t border-slate-200 px-1 pt-3">
-                    <div className="flex items-center justify-between gap-3 text-xs text-slate-500">
+                <footer className="px-0.5 pt-1">
+                    <div className="flex items-center justify-between gap-3 text-[12px] text-slate-600">
                         <span>Built by {BRAND_NAME}</span>
                         <a
                             className="inline-flex items-center gap-1.5 transition hover:text-slate-950"

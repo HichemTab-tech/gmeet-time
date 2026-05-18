@@ -1,4 +1,4 @@
-import {ArrowUpRight, ChevronDown, Clock3, Radio, Timer} from 'lucide-react'
+import {ArrowUpRight, ChevronDown, Clock3, Radio, Timer, X} from 'lucide-react'
 import {useEffect, useMemo, useState} from 'react'
 import {getExtensionSnapshot} from '../lib/storage'
 import {clampDurationToWindow, formatDayLabel, formatDuration, getDayWindow, overlapsWindow,} from '../lib/time'
@@ -7,6 +7,7 @@ import {ActiveSessionCard} from './components/active-session-card'
 import {TimelineItem} from './components/timeline-item'
 
 const GITHUB_URL = 'https://github.com/HichemTab-tech/gmeet-time'
+const PRIVACY_POLICY_URL = 'https://github.com/HichemTab-tech/gmeet-time/blob/main/PRIVACY.md'
 const BRAND_NAME = 'HichemTab-tech'
 
 const EMPTY_SNAPSHOT: ExtensionSnapshot = {
@@ -18,6 +19,7 @@ function App() {
     const [snapshot, setSnapshot] = useState<ExtensionSnapshot>(EMPTY_SNAPSHOT)
     const [loading, setLoading] = useState(true)
     const [now, setNow] = useState(() => Date.now())
+    const [aboutOpen, setAboutOpen] = useState(false)
 
     useEffect(() => {
         let mounted = true
@@ -116,33 +118,61 @@ function App() {
                             More
                             <ChevronDown className="h-3.5 w-3.5 transition group-open:rotate-180"/>
                         </summary>
-                        <div className="absolute right-0 z-10 mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_18px_38px_rgba(15,23,42,0.12)]">
-                            <div className="grid grid-cols-3 gap-2 text-center">
-                                <div className="rounded-2xl bg-slate-50 px-2 py-2.5">
-                                    <div className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Total</div>
-                                    <div className="font-mono mt-1 text-xs text-slate-950">{formatDuration(today.totalMeetingMs)}</div>
-                                </div>
-                                <div className="rounded-2xl bg-slate-50 px-2 py-2.5">
-                                    <div className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Meetings</div>
-                                    <div className="font-mono mt-1 text-xs text-slate-950">{today.meetingCount}</div>
-                                </div>
-                                <div className="rounded-2xl bg-slate-50 px-2 py-2.5">
-                                    <div className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Longest</div>
-                                    <div className="font-mono mt-1 text-xs text-slate-950">{formatDuration(today.longestSessionMs)}</div>
-                                </div>
-                            </div>
+                        <div className="absolute right-0 z-10 mt-2 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_18px_38px_rgba(15,23,42,0.12)]">
                             <a
-                                className="mt-3 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-500 transition hover:text-slate-950"
+                                className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
                                 href={GITHUB_URL}
                                 target="_blank"
                                 rel="noreferrer"
                             >
+                                <span>Repository</span>
                                 <ArrowUpRight className="h-3.5 w-3.5"/>
-                                Repository
+                            </a>
+                            <button
+                                type="button"
+                                className="flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+                                onClick={() => setAboutOpen((current) => !current)}
+                            >
+                                <span>About</span>
+                                <ChevronDown className={`h-3.5 w-3.5 transition ${aboutOpen ? 'rotate-180' : ''}`}/>
+                            </button>
+                            <a
+                                className="flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-950"
+                                href={PRIVACY_POLICY_URL}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                <span>Privacy policy</span>
+                                <ArrowUpRight className="h-3.5 w-3.5"/>
                             </a>
                         </div>
                     </details>
                 </header>
+
+                {aboutOpen ? (
+                    <section className="mb-4 rounded-3xl border border-slate-200 bg-slate-50/90 px-4 py-4">
+                        <div className="flex items-start justify-between gap-3">
+                            <div>
+                                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
+                                    About
+                                </div>
+                                <p className="mt-2 text-sm leading-6 text-slate-700">
+                                    gmeet-time detects Google Meet join and leave activity, stores sessions locally in
+                                    Chrome extension storage, and shows the current meeting plus today&apos;s timeline in
+                                    the popup.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                className="rounded-full border border-slate-200 bg-white p-2 text-slate-500 transition hover:border-slate-300 hover:text-slate-950"
+                                onClick={() => setAboutOpen(false)}
+                                aria-label="Close about panel"
+                            >
+                                <X className="h-3.5 w-3.5"/>
+                            </button>
+                        </div>
+                    </section>
+                ) : null}
 
                 {today.active.length > 0 ? (
                     <section className="mb-5 space-y-3">

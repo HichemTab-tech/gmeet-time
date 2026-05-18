@@ -1,161 +1,141 @@
-# React + TypeScript + Vite
+# gmeet-time
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+`gmeet-time` is a Chrome extension that automatically tracks time spent in Google Meet and surfaces the day as a clean, developer-oriented timeline.
 
-Currently, two official plugins are available:
+It is built with React, TypeScript, Vite, Tailwind CSS v4, and a Manifest V3 architecture using a background service worker plus a Meet-specific content script.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Detects when you join and leave Google Meet sessions.
+- Tracks active meeting state with heartbeat-based reconciliation.
+- Stores completed sessions locally in Chrome extension storage.
+- Shows a live active session card while a meeting is running.
+- Summarizes today with total time, meeting count, and longest session.
+- Displays a polished daily timeline with start time, end time, duration, and meet code/title.
+- Keeps the MVP local-first with no backend or external services.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React 19
+- TypeScript 6
+- Vite 8
+- Tailwind CSS 4 via `@tailwindcss/vite`
+- `@crxjs/vite-plugin` for Chrome extension bundling
+- Chrome Extension Manifest V3 APIs (`storage`, `alarms`, background service worker, content scripts)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Architecture
 
-```js
-export default defineConfig([
-  # gmeet-time
+```text
+ src/
+   background/    Service worker, active-session orchestration, storage writes
+   content/       Google Meet presence detection and heartbeat messages
+   lib/           Shared helpers for storage, time math, and meet parsing
+   popup/         React popup UI and presentational components
+   types/         Shared message/session contracts
+ manifest.config.ts  Typed MV3 manifest
+ ```
 
-  `gmeet-time` is a Chrome extension that automatically tracks time spent in Google Meet and surfaces the day as a clean, developer-oriented timeline.
+### Runtime Flow
 
-  It is built with React, TypeScript, Vite, Tailwind CSS v4, and a Manifest V3 architecture using a background service worker plus a Meet-specific content script.
+1. A content script runs only on `https://meet.google.com/*`.
+2. It detects in-call state using Meet UI heuristics and sends `join`, `heartbeat`, and `leave` messages.
+3. The background service worker owns active session state.
+4. Active sessions are cached in `chrome.storage.session`.
+5. Completed sessions are persisted in `chrome.storage.local`.
+6. The popup reads both stores, computes today’s summary, and renders the timeline.
 
-  ## Features
+## Local Development
 
-  - Detects when you join and leave Google Meet sessions.
-  - Tracks active meeting state with heartbeat-based reconciliation.
-  - Stores completed sessions locally in Chrome extension storage.
-  - Shows a live active session card while a meeting is running.
-  - Summarizes today with total time, meeting count, and longest session.
-  - Displays a polished daily timeline with start time, end time, duration, and meet code/title.
-  - Keeps the MVP local-first with no backend or external services.
+### Requirements
 
-  ## Tech Stack
+- Node.js 20+
+- `pnpm`
+- Google Chrome
 
-  - React 19
-  - TypeScript 6
-  - Vite 8
-  - Tailwind CSS 4 via `@tailwindcss/vite`
-  - `@crxjs/vite-plugin` for Chrome extension bundling
-  - Chrome Extension Manifest V3 APIs (`storage`, `alarms`, background service worker, content scripts)
+### Install
 
-  ## Architecture
+```bash
+pnpm install
+```
 
-  ```text
-  src/
-    background/    Service worker, active-session orchestration, storage writes
-    content/       Google Meet presence detection and heartbeat messages
-    lib/           Shared helpers for storage, time math, and meet parsing
-    popup/         React popup UI and presentational components
-    types/         Shared message/session contracts
-  manifest.config.ts  Typed MV3 manifest
-  ```
+### Start extension dev build
 
-  ### Runtime Flow
+```bash
+pnpm dev
+```
 
-  1. A content script runs only on `https://meet.google.com/*`.
-  2. It detects in-call state using Meet UI heuristics and sends `join`, `heartbeat`, and `leave` messages.
-  3. The background service worker owns active session state.
-  4. Active sessions are cached in `chrome.storage.session`.
-  5. Completed sessions are persisted in `chrome.storage.local`.
-  6. The popup reads both stores, computes today’s summary, and renders the timeline.
+Keep the Vite process running while testing the extension in dev mode. The CRXJS dev bundle loaded from `dist` uses localhost-backed loader files for HMR.
 
-  ## Local Development
+### Production build
 
-  ### Requirements
+```bash
+pnpm build
+```
 
-  - Node.js 20+
-  - `pnpm`
-  - Google Chrome
+Use the production `dist` from `pnpm build` when you want a standalone unpacked extension that does not depend on the Vite dev server.
 
-  ### Install
+### Lint
 
-  ```bash
-  pnpm install
-  ```
+```bash
+pnpm lint
+```
 
-  ### Start extension dev build
+## Load in Chrome Developer Mode
 
-  ```bash
-  pnpm dev
-  ```
+1. Build the extension:
 
-  Keep the Vite process running while testing the extension in dev mode. The CRXJS dev bundle loaded from `dist` uses localhost-backed loader files for HMR.
+   ```bash
+   pnpm build
+   ```
 
-  ### Production build
+2. Open Chrome and navigate to `chrome://extensions`.
+3. Enable `Developer mode`.
+4. Click `Load unpacked`.
+5. Select the generated `dist` directory from this project.
+6. Pin `gmeet-time` if you want one-click access while testing.
 
-  ```bash
-  pnpm build
-  ```
+If you are running `pnpm dev`, Chrome should load the `dist` directory while the dev server stays alive. If you stop the dev server, reload after running `pnpm build` so the extension no longer points at `http://localhost:5173`.
 
-  Use the production `dist` from `pnpm build` when you want a standalone unpacked extension that does not depend on the Vite dev server.
+## When To Reload During Development
 
-  ### Lint
+- `manifest.config.ts`: reload the extension
+- `src/background/*`: reload the extension
+- `src/content/*`: reload the extension and refresh the Meet tab
+- `src/popup/*`: reopening the popup is usually enough in dev, but reloading the extension is still the safest path
 
-  ```bash
-  pnpm lint
-  ```
+## Storage Model
 
-  ## Load in Chrome Developer Mode
+### `chrome.storage.session`
 
-  1. Build the extension:
+- Active sessions
+- In-memory per extension load
+- Used for live popup state and restart-safe service worker hydration during the same browser session
 
-     ```bash
-     pnpm build
-     ```
+### `chrome.storage.local`
 
-  2. Open Chrome and navigate to `chrome://extensions`.
-  3. Enable `Developer mode`.
-  4. Click `Load unpacked`.
-  5. Select the generated `dist` directory from this project.
-  6. Pin `gmeet-time` if you want one-click access while testing.
+- Completed meeting sessions
+- Persistent local history
+- Good base for future weekly/monthly aggregation, export/import, and sync
 
-  If you are running `pnpm dev`, Chrome should load the `dist` directory while the dev server stays alive. If you stop the dev server, reload after running `pnpm build` so the extension no longer points at `http://localhost:5173`.
+## Notes About Detection
 
-  ## When To Reload During Development
+This MVP uses Meet UI heuristics to infer active call state. That keeps permissions small and the architecture simple, but it does mean detection can shift if Google changes Meet’s DOM or if UI labels vary heavily by locale.
 
-  - `manifest.config.ts`: reload the extension
-  - `src/background/*`: reload the extension
-  - `src/content/*`: reload the extension and refresh the Meet tab
-  - `src/popup/*`: reopening the popup is usually enough in dev, but reloading the extension is still the safest path
+The current implementation is intentionally structured so the content-side detector can be extended later without rewriting storage or popup logic.
 
-  ## Storage Model
+## Future Extensions
 
-  ### `chrome.storage.session`
+- Weekly and monthly rollups
+- Charts and trends
+- Session tags and notes
+- Export/import
+- Sync across browsers
+- Improved locale-aware detection heuristics
 
-  - Active sessions
-  - In-memory per extension load
-  - Used for live popup state and restart-safe service worker hydration during the same browser session
+## Built by
 
-  ### `chrome.storage.local`
+@HichemTab-tech
 
-  - Completed meeting sessions
-  - Persistent local history
-  - Good base for future weekly/monthly aggregation, export/import, and sync
+## License
 
-  ## Notes About Detection
-
-  This MVP uses Meet UI heuristics to infer active call state. That keeps permissions small and the architecture simple, but it does mean detection can shift if Google changes Meet’s DOM or if UI labels vary heavily by locale.
-
-  The current implementation is intentionally structured so the content-side detector can be extended later without rewriting storage or popup logic.
-
-  ## Future Extensions
-
-  - Weekly and monthly rollups
-  - Charts and trends
-  - Session tags and notes
-  - Export/import
-  - Sync across browsers
-  - Improved locale-aware detection heuristics
-
-  ## Branding
-
-  - Developer: `HichemTab-tech`
-  - Repository: `https://github.com/HichemTab-tech/gmeet-time`
-
-  ## License
-
-  Open source. Add your preferred license before publishing.
+MIT License. See [LICENSE](LICENSE) for details.

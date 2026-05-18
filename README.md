@@ -83,11 +83,15 @@ export default defineConfig([
   pnpm dev
   ```
 
+  Keep the Vite process running while testing the extension in dev mode. The CRXJS dev bundle loaded from `dist` uses localhost-backed loader files for HMR.
+
   ### Production build
 
   ```bash
   pnpm build
   ```
+
+  Use the production `dist` from `pnpm build` when you want a standalone unpacked extension that does not depend on the Vite dev server.
 
   ### Lint
 
@@ -108,6 +112,8 @@ export default defineConfig([
   4. Click `Load unpacked`.
   5. Select the generated `dist` directory from this project.
   6. Pin `gmeet-time` if you want one-click access while testing.
+
+  If you are running `pnpm dev`, Chrome should load the `dist` directory while the dev server stays alive. If you stop the dev server, reload after running `pnpm build` so the extension no longer points at `http://localhost:5173`.
 
   ## When To Reload During Development
 

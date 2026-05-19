@@ -87,16 +87,25 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: |
-          response=$(curl --fail-with-body -sS \
+          response=$(curl -sS \
             -X POST \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
             -H "x-goog-api-version: 2" \
             -T "${{ env.ZIP_FILE }}" \
-            "https://chromewebstore.googleapis.com/upload/v2/${{ env.ITEM_NAME }}:upload")
+            "https://chromewebstore.googleapis.com/upload/v2/${{ env.ITEM_NAME }}:upload" \
+            -w "\n%{http_code}")
 
-          echo "$response"
+          http_status=$(echo "$response" | tail -n 1)
+          response_body=$(echo "$response" | sed '$d')
 
-          upload_state=$(echo "$response" | jq -r '.uploadState // empty')
+          echo "$response_body"
+
+          if [ "$http_status" != "200" ]; then
+            echo "Chrome Web Store upload failed (HTTP $http_status)"
+            exit 1
+          fi
+
+          upload_state=$(echo "$response_body" | jq -r '.uploadState // empty')
 
           if [ "$upload_state" = "FAILED" ]; then
             exit 1
@@ -107,14 +116,23 @@ jobs:
           ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: |
           for attempt in $(seq 1 18); do
-            response=$(curl --fail-with-body -sS \
+            response=$(curl -sS \
               -H "Authorization: Bearer $ACCESS_TOKEN" \
               -H "x-goog-api-version: 2" \
-              "https://chromewebstore.googleapis.com/v2/${{ env.ITEM_NAME }}:fetchStatus")
+              "https://chromewebstore.googleapis.com/v2/${{ env.ITEM_NAME }}:fetchStatus" \
+              -w "\n%{http_code}")
 
-            echo "$response"
+            http_status=$(echo "$response" | tail -n 1)
+            response_body=$(echo "$response" | sed '$d')
 
-            upload_state=$(echo "$response" | jq -r '.lastAsyncUploadState // "SUCCEEDED"')
+            echo "$response_body"
+
+            if [ "$http_status" != "200" ]; then
+              echo "Chrome Web Store status check failed (HTTP $http_status)"
+              exit 1
+            fi
+
+            upload_state=$(echo "$response_body" | jq -r '.lastAsyncUploadState // "SUCCEEDED"')
 
             if [ "$upload_state" = "SUCCEEDED" ] || [ "$upload_state" = "NOT_FOUND" ]; then
               exit 0
@@ -134,17 +152,26 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
         run: |
-          response=$(curl --fail-with-body -sS \
+          response=$(curl -sS \
             -X POST \
             -H "Authorization: Bearer $ACCESS_TOKEN" \
             -H "Content-Type: application/json" \
             -H "x-goog-api-version: 2" \
             -d "{\"publishType\":\"${{ env.CWS_PUBLISH_TYPE }}\"}" \
-            "https://chromewebstore.googleapis.com/v2/${{ env.ITEM_NAME }}:publish")
+            "https://chromewebstore.googleapis.com/v2/${{ env.ITEM_NAME }}:publish" \
+            -w "\n%{http_code}")
 
-          echo "$response"
+          http_status=$(echo "$response" | tail -n 1)
+          response_body=$(echo "$response" | sed '$d')
 
-          state=$(echo "$response" | jq -r '.state // empty')
+          echo "$response_body"
+
+          if [ "$http_status" != "200" ]; then
+            echo "Chrome Web Store publish failed (HTTP $http_status)"
+            exit 1
+          fi
+
+          state=$(echo "$response_body" | jq -r '.state // empty')
 
           if [ -z "$state" ] || [ "$state" = "REJECTED" ] || [ "$state" = "CANCELLED" ]; then
             exit 1

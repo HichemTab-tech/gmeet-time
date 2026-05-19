@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gmeet-time Promo Tiles</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --page-bg: #eef3f6;
+            --ink: #0f172a;
+            --muted: #526071;
+            --line: rgba(255, 255, 255, 0.18);
+            --navy: #12325a;
+            --blue: #215f87;
+            --teal: #3ea9b6;
+            --soft: #f6efe5;
+            --panel: rgba(255, 255, 255, 0.92);
+            --panel-strong: #ffffff;
+            --accent: #f8b84e;
+            --accent-2: #9dd8df;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px;
+            background: linear-gradient(180deg, #f4f7f9 0%, #e9eef3 100%);
+            color: var(--ink);
+            font-family: "Segoe UI", Inter, Arial, sans-serif;
+        }
+
+        .page {
+            width: fit-content;
+            min-width: 100%;
+            display: grid;
+            gap: 32px;
+            justify-content: center;
+        }
+
+        .capture-group {
+            display: grid;
+            gap: 12px;
+            justify-items: start;
+        }
+
+        .capture-meta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            color: #415062;
+            font-size: 14px;
+        }
+
+        .capture-meta strong {
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .capture-meta span {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .tile {
+            position: relative;
+            overflow: hidden;
+            background: #12325a;
+            color: white;
+            isolation: isolate;
+        }
+
+        .tile::before,
+        .tile::after {
+            content: "";
+            position: absolute;
+            inset: auto;
+            pointer-events: none;
+        }
+
+        .tile-small {
+            width: 440px;
+            height: 280px;
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at 12% 10%, rgba(135, 232, 230, 0.35), transparent 24%),
+                radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.12), transparent 22%),
+                linear-gradient(135deg, #2b93a7 0%, #194f7d 48%, #102949 100%);
+            box-shadow: 0 28px 60px rgba(21, 41, 72, 0.22);
+        }
+
+        .tile-small::before {
+            top: 24px;
+            right: -10px;
+            width: 180px;
+            height: 180px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 70%);
+        }
+
+        .tile-marquee {
+            width: 1400px;
+            height: 560px;
+            border-radius: 42px;
+            background:
+                radial-gradient(circle at 8% 12%, rgba(132, 224, 224, 0.25), transparent 22%),
+                radial-gradient(circle at 90% 22%, rgba(255, 255, 255, 0.10), transparent 18%),
+                linear-gradient(135deg, #2c9cad 0%, #1b5b85 40%, #102947 100%);
+            box-shadow: 0 42px 90px rgba(17, 36, 64, 0.24);
+        }
+
+        .tile-marquee::before {
+            top: 48px;
+            right: 58px;
+            width: 340px;
+            height: 340px;
+            border-radius: 999px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 72%);
+        }
+
+        .tile-marquee::after {
+            left: 54%;
+            top: 42px;
+            width: 1px;
+            height: 470px;
+            background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+        }
+
+        .small-inner {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #8af0df;
+            box-shadow: 0 0 0 6px rgba(138, 240, 223, 0.14);
+        }
+
+        .small-copy {
+            display: grid;
+            align-content: start;
+            gap: 14px;
+        }
+
+        .small-copy h1,
+        .marquee-copy h1 {
+            margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            line-height: 0.96;
+        }
+
+        .small-copy h1 {
+            font-size: 40px;
+            max-width: 240px;
+        }
+
+        .small-copy p {
+            margin: 0;
+            max-width: 240px;
+            color: rgba(255, 255, 255, 0.84);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .small-side {
+            display: grid;
+            align-content: space-between;
+            justify-items: end;
+        }
+
+        .logo-badge {
+            width: 104px;
+            height: 104px;
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(10px);
+            display: grid;
+            place-items: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .logo-badge img,
+        .hero-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .mini-panel {
+            width: 162px;
+            padding: 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #143253;
+            box-shadow: 0 16px 30px rgba(11, 31, 59, 0.18);
+        }
+
+        .mini-panel .label,
+        .stat .label,
+        .mock-header .label,
+        .timeline-item .label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .mini-panel .value {
+            margin-top: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .mini-panel .sub {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #44617d;
+        }
+
+        .marquee-inner {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            padding: 46px 52px;
+            display: grid;
+            grid-template-columns: 1fr 0.92fr;
+            gap: 34px;
+        }
+
+        .marquee-copy {
+            display: grid;
+            align-content: center;
+            gap: 22px;
+            padding-right: 12px;
+        }
+
+        .marquee-copy h1 {
+            font-size: 78px;
+            max-width: 620px;
+        }
+
+        .marquee-copy p {
+            margin: 0;
+            max-width: 580px;
+            color: rgba(255, 255, 255, 0.84);
+            font-size: 24px;
+            line-height: 1.35;
+        }
+
+        .marquee-topline {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .marquee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 14px;
+        }
+
+        .stat {
+            min-width: 150px;
+            padding: 18px 18px 16px;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            color: #163456;
+            box-shadow: 0 18px 34px rgba(9, 27, 51, 0.16);
+        }
+
+        .stat .number {
+            margin-top: 10px;
+            font-size: 34px;
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .stat .sub {
+            margin-top: 8px;
+            color: #58708a;
+            font-size: 14px;
+        }
+
+        .hero-logo {
+            position: absolute;
+            right: 76px;
+            top: 68px;
+            width: 150px;
+            height: 150px;
+            border-radius: 34px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            backdrop-filter: blur(12px);
+            padding: 16px;
+        }
+
+        .mock-ui {
+            align-self: center;
+            justify-self: end;
+            width: 560px;
+            height: 430px;
+            border-radius: 34px;
+            padding: 22px;
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.94));
+            color: #0f172a;
+            box-shadow: 0 32px 60px rgba(9, 27, 51, 0.2);
+            display: grid;
+            gap: 16px;
+        }
+
+        .mock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .mock-title {
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+        }
+
+        .mock-subtitle {
+            margin-top: 6px;
+            color: #5f6f81;
+            font-size: 15px;
+        }
+
+        .active-card {
+            border-radius: 26px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff4dc 0%, #fce3b5 100%);
+            display: grid;
+            gap: 14px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .active-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .live-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #87540f;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .active-title {
+            margin-top: 12px;
+            font-size: 30px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            color: #1d2c3f;
+        }
+
+        .active-time {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            color: #12325a;
+        }
+
+        .active-meta {
+            display: flex;
+            gap: 16px;
+            color: #536578;
+            font-size: 14px;
+        }
+
+        .timeline {
+            display: grid;
+            gap: 10px;
+        }
+
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .timeline-item {
+            border-radius: 20px;
+            padding: 14px 15px;
+            background: white;
+            box-shadow: 0 12px 22px rgba(15, 23, 42, 0.06);
+            display: grid;
+            gap: 8px;
+        }
+
+        .timeline-item strong {
+            font-size: 17px;
+            letter-spacing: -0.03em;
+            color: #16283d;
+        }
+
+        .timeline-item .meta {
+            display: flex;
+            justify-content: space-between;
+            color: #5b6d80;
+            font-size: 13px;
+        }
+
+        .footer-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+        }
+
+        .footer-line strong {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="capture-group">
+            <div class="capture-meta">
+                <strong>Small promo tile</strong>
+                <span>440 x 280</span>
+                <span>PNG or JPEG</span>
+            </div>
+            <div class="tile tile-small" id="promo-tile-small">
+                <div class="small-inner">
+                    <div class="small-copy">
+                        <div class="eyebrow"><span class="dot"></span> Chrome Extension</div>
+                        <h1>Track every Meet minute.</h1>
+                        <p>Live meeting timer, clean daily timeline, and local-first tracking built for focused teams.</p>
+                        <div class="chip-row">
+                            <span class="chip">Live session</span>
+                            <span class="chip">Daily history</span>
+                            <span class="chip">Privacy-first</span>
+                        </div>
+                    </div>
+                    <div class="small-side">
+                        <div class="logo-badge">
+                            <img src="./src/assets/gmeet-time.png" alt="gmeet-time logo" />
+                        </div>
+                        <div class="mini-panel">
+                            <div class="label">Today</div>
+                            <div class="value">2h 18m</div>
+                            <div class="sub">5 meetings tracked automatically</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="capture-group">
+            <div class="capture-meta">
+                <strong>Marquee promo tile</strong>
+                <span>1400 x 560</span>
+                <span>PNG or JPEG</span>
+            </div>
+            <div class="tile tile-marquee" id="promo-tile-marquee">
+                <div class="hero-logo">
+                    <img src="./src/assets/gmeet-time.png" alt="gmeet-time logo" />
+                </div>
+                <div class="marquee-inner">
+                    <div class="marquee-copy">
+                        <div class="marquee-topline">
+                            <div class="marquee-badge"><span class="dot"></span> gmeet-time</div>
+                        </div>
+                        <h1>Your Google Meet timeline, automatically.</h1>
+                        <p>See active sessions in real time, review every meeting from the day, and keep your tracking entirely inside the browser.</p>
+                        <div class="stats-row">
+                            <div class="stat">
+                                <div class="label">Today</div>
+                                <div class="number">2h 47m</div>
+                                <div class="sub">Total tracked</div>
+                            </div>
+                            <div class="stat">
+                                <div class="label">Meetings</div>
+                                <div class="number">6</div>
+                                <div class="sub">Sessions logged</div>
+                            </div>
+                            <div class="stat">
+                                <div class="label">Longest</div>
+                                <div class="number">46m</div>
+                                <div class="sub">Deep work sync</div>
+                            </div>
+                        </div>
+                        <div class="footer-line">
+                            <span>Live timer, clean history, no backend.</span>
+                            <strong>meet.google.com ready</strong>
+                        </div>
+                    </div>
+
+                    <div class="mock-ui">
+                        <div class="mock-header">
+                            <div>
+                                <div class="mock-title">gmeet-time</div>
+                                <div class="mock-subtitle">Today&apos;s meetings at a glance</div>
+                            </div>
+                            <div class="label">Popup Preview</div>
+                        </div>
+
+                        <div class="active-card">
+                            <div class="active-head">
+                                <div>
+                                    <div class="live-chip"><span class="dot"></span> Live now</div>
+                                    <div class="active-title">Design review</div>
+                                </div>
+                                <div class="active-time">00:31:42</div>
+                            </div>
+                            <div class="active-meta">
+                                <span>Started 2:14 PM</span>
+                                <span>meet.google.com/qrs-tuvw-xyz</span>
+                            </div>
+                        </div>
+
+                        <div class="timeline">
+                            <div class="timeline-row">
+                                <div class="timeline-item">
+                                    <div class="label">Timeline</div>
+                                    <strong>Daily product sync</strong>
+                                    <div class="meta"><span>9:15 - 10:01</span><span>46m</span></div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="label">Timeline</div>
+                                    <strong>Client kickoff review</strong>
+                                    <div class="meta"><span>10:38 - 11:16</span><span>38m</span></div>
+                                </div>
+                            </div>
+                            <div class="timeline-row">
+                                <div class="timeline-item">
+                                    <div class="label">Timeline</div>
+                                    <strong>Frontend handoff</strong>
+                                    <div class="meta"><span>11:46 - 12:13</span><span>27m</span></div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="label">Timeline</div>
+                                    <strong>Weekly planning</strong>
+                                    <div class="meta"><span>1:08 - 1:27</span><span>19m</span></div>
+                                </div>
+                            </div>
+                            <div class="timeline-row">
+                                <div class="timeline-item">
+                                    <div class="label">Timeline</div>
+                                    <strong>Hiring panel interview</strong>
+                                    <div class="meta"><span>1:32 - 1:56</span><span>24m</span></div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="label">Timeline</div>
+                                    <strong>Engineering office hours</strong>
+                                    <div class="meta"><span>2:01 - 2:09</span><span>8m</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -57,17 +57,27 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
         run: |
-          response=$(curl --fail-with-body -sS https://oauth2.googleapis.com/token \
-            -d client_id="$CLIENT_ID" \
-            -d client_secret="$CLIENT_SECRET" \
-            -d refresh_token="$REFRESH_TOKEN" \
-            -d grant_type=refresh_token)
+          response=$(curl -sS -X POST https://oauth2.googleapis.com/token \
+            --data-urlencode "client_id=$CLIENT_ID" \
+            --data-urlencode "client_secret=$CLIENT_SECRET" \
+            --data-urlencode "refresh_token=$REFRESH_TOKEN" \
+            --data-urlencode "grant_type=refresh_token" \
+            -w "\n%{http_code}")
 
-          access_token=$(echo "$response" | jq -r '.access_token')
+          http_status=$(echo "$response" | tail -n 1)
+          response_body=$(echo "$response" | sed '$d')
+
+          if [ "$http_status" != "200" ]; then
+            echo "Unable to obtain access token from Google OAuth (HTTP $http_status)"
+            echo "$response_body"
+            exit 1
+          fi
+
+          access_token=$(echo "$response_body" | jq -r '.access_token')
 
           if [ -z "$access_token" ] || [ "$access_token" = "null" ]; then
             echo "Unable to obtain access token"
-            echo "$response"
+            echo "$response_body"
             exit 1
           fi
 

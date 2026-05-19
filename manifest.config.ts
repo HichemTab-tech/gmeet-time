@@ -1,9 +1,12 @@
 import {defineManifest} from '@crxjs/vite-plugin'
+import pkg from './package.json'
+
+const version = pkg.version;
 
 const manifest = defineManifest({
     manifest_version: 3,
     name: 'gmeet-time',
-    version: '0.1.0',
+    version: version,
     description:
         'Track Google Meet time automatically and review a clean daily meeting timeline.',
     homepage_url: 'https://github.com/HichemTab-tech/gmeet-time',
